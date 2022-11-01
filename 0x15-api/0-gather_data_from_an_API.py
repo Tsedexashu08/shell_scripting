@@ -1,25 +1,30 @@
 #!/usr/bin/python3
-import json
+"""For a given employee ID, returns information about
+their TODO list progress"""
+
 import requests
 import sys
 
-
 if __name__ == "__main__":
-        employee_id = sys.argv[1]
-            data = requests.get("https://jsonplaceholder.typicode.com/todos/",
-                                            params={"userId": employee_id}).json()
-                user = requests.get("https://jsonplaceholder.typicode.com/users/{}"
-                                                .format(employee_id)).json()
-                    task_done = 0
-                        total_task = 0
-                            name = user.get("name")
-                                total_task = len(data)
-                                    for my_dict in data:
-                                                task_status = my_dict.get("completed")
-                                                        if task_status is True:
-                                                                        task_done += 1
-                                                                            print("Employee {} is done with tasks({}/{}):"
-                                                                                              .format(name, task_done, total_task))
-                                                                                for my_dict in data:
-                                                                                            if my_dict.get("completed") is True:
-                                                                                                            print("\t {}".format(my_dict.get("title")))
+
+        userId = sys.argv[1]
+            user = requests.get("https://jsonplaceholder.typicode.com/users/{}"
+                                            .format(userId))
+
+                name = user.json().get('name')
+
+                    todos = requests.get('https://jsonplaceholder.typicode.com/todos')
+                        totalTasks = 0
+                            completed = 0
+
+                                for task in todos.json():
+                                            if task.get('userId') == int(userId):
+                                                            totalTasks += 1
+                                                                        if task.get('completed'):
+                                                                                            completed += 1
+
+                                                                                                print('Employee {} is done with tasks({}/{}):'
+                                                                                                                  .format(name, completed, totalTasks))
+
+                                                                                                    print('\n'.join(["\t " + task.get('title') for task in todos.json()
+                                                                                                                  if task.get('userId') == int(userId) and task.get('completed')]))
