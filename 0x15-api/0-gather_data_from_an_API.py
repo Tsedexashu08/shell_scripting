@@ -1,14 +1,25 @@
 #!/usr/bin/python3
-"""Returns to-do list information for a given employee ID."""
+import json
 import requests
 import sys
 
-if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(url + "users/{}".format(sys.argv[1])).json()
-    todos = requests.get(url + "todos", params={"userId": sys.argv[1]}).json()
 
-    completed = [t.get("title") for t in todos if t.get("completed") is True]
-    print("Employee {} is done with tasks({}/{}):".format(
-        user.get("name"), len(completed), len(todos)))
-    [print("\t {}".format(c)) for c in completed]
+if __name__ == "__main__":
+        employee_id = sys.argv[1]
+            data = requests.get("https://jsonplaceholder.typicode.com/todos/",
+                                            params={"userId": employee_id}).json()
+                user = requests.get("https://jsonplaceholder.typicode.com/users/{}"
+                                                .format(employee_id)).json()
+                    task_done = 0
+                        total_task = 0
+                            name = user.get("name")
+                                total_task = len(data)
+                                    for my_dict in data:
+                                                task_status = my_dict.get("completed")
+                                                        if task_status is True:
+                                                                        task_done += 1
+                                                                            print("Employee {} is done with tasks({}/{}):"
+                                                                                              .format(name, task_done, total_task))
+                                                                                for my_dict in data:
+                                                                                            if my_dict.get("completed") is True:
+                                                                                                            print("\t {}".format(my_dict.get("title")))
